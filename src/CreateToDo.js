@@ -1,6 +1,6 @@
-import { View, TextInput, TouchableOpacity,ScrollView, ImageBackground, StyleSheet, Animated, } from 'react-native'
+import { View, TextInput, TouchableOpacity, ScrollView, ImageBackground, StyleSheet, Animated, Text } from 'react-native'
 import React, { useState, useRef, useEffect } from 'react'
-import { Text } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function CreateToDo() {
@@ -15,37 +15,69 @@ export default function CreateToDo() {
     }).start();
   }, [fadeAnim]);
 
-  const [task, setTask] = useState('');
-  const [addtask, setAddTask] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const storedTasks = await AsyncStorage.getItem('Task');
+        if (storedTasks) {
+          const parsedTasks = JSON.parse(storedTasks);
+          setTaskArray(parsedTasks);
+        }
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // ADD TASK Button 
+  const [taskArray, setTaskArray] = useState([]) 
+  const [inputvalue, setInputValue] = useState('')
+
   const handleAddTask = () => {
-    if (task && task.trim() !== '') {
-      setAddTask([...addtask, task]);
-      setTask('');
+
+    if (inputvalue.trim() === '') {
+      console.log("its should not ne null")
+      return
     }
-  };
 
-  //delet Task
+    var TaskArrayObject = {
+      description: inputvalue
+    }
 
-  const handleRemoveTask = (removetext) =>{
-    const updateTask = addtask.filter((task) => task !== removetext);
-    setAddTask(updateTask)
+    const updatetask = [...taskArray, TaskArrayObject]
+
+    AsyncStorage.setItem("Task", JSON.stringify(updatetask))
+
+    setTaskArray(updatetask);
+    setInputValue('')
   }
 
 
+  //delet Task
+  const removeTask = (removetext) => {
+    const updateTask = taskArray.filter((task) => task.description !== removetext);
+    setTaskArray(updateTask)
 
-  function ShowList({ text,removeTask }) {
-     return (
+    AsyncStorage.setItem('Task', JSON.stringify(updateTask));
+  }
+
+ 
+
+
+
+  function ShowList({ text, removeTask }) {
+    return (
       <View style={styles.item}>
-      
-      <Text style={styles.itemText}>{text}</Text>
+
+        <Text style={styles.itemText}>{text}</Text>
         <TouchableOpacity style={styles.btn} onPress={() => removeTask(text)}>
           <Text>Remove Task</Text>
         </TouchableOpacity>
 
-      
-        
+
+
       </View>
 
     )
@@ -59,8 +91,8 @@ export default function CreateToDo() {
           <TextInput
             style={styles.input}
             placeholder="Enter your Task"
-            value={task}
-            onChangeText={setTask}>
+            value={inputvalue}
+            onChangeText={setInputValue}>
           </TextInput>
         </View>
 
@@ -73,15 +105,12 @@ export default function CreateToDo() {
         </View>
 
         <ScrollView style={styles.showlist}>
-        
-        {
-            addtask.map((item, index) => {
-              return (<ShowList key={index} text={item} removeTask={handleRemoveTask}/>);
+
+          {
+            taskArray.map((item, index) => {
+              return (<ShowList key={index} text={item.description} removeTask={()=>{removeTask(item.description)}} />);
             })
           }
-
-        
-          
         </ScrollView>
       </View>
     </ImageBackground>
