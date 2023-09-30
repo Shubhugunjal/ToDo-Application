@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# ToDo-Application
+The React Native ToDo application is a mobile app designed for efficient task management. It allows users to create and delete tasks.To enhance the user experience, the app utilizes AsyncStorage, a local storage solution. This allows task data to be persistently stored on the user's device.
 
 # Getting Started
 
@@ -79,6 +79,5 @@ To learn more about React Native, take a look at the following resources:
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
 =======
-# ToDo-Application
-The React Native ToDo application is a mobile app designed for efficient task management. It allows users to create and delete tasks.To enhance the user experience, the app utilizes AsyncStorage, a local storage solution. This allows task data to be persistently stored on the user's device.
->>>>>>> origin/main
+
+
